@@ -13,7 +13,7 @@ namespace Chess
         Moves moves;
         List<FigureMoving> allMoves;
 
-        public Chess(string fen = "rnbqkbnr/pppppppp/8/8/8/8/PP1111PP/RNBQKBNR b KQkq e3 0 1")
+        public Chess(string fen = "rnbqkbnr/1p1111p1/8/8/8/8/1P1111P1/RNBQKBNR w KQkq - 0 1")
         {
             this.fen = fen;
             board = new Board(fen);
@@ -54,6 +54,15 @@ namespace Chess
                     if (moves.CanMove(fm))
                         allMoves.Add(fm);
                 }
+        }
+
+        public List<string> GetAllMoves()
+        {
+            FindAllMoves();
+            List<string> list = new List<string>();
+            foreach (FigureMoving fm in allMoves)
+                list.Add(fm.ToString());
+            return list;
         }
     }
 }

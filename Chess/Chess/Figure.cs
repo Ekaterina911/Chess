@@ -36,7 +36,9 @@ namespace Chess
                     figure == Figure.whiteRook ||
                     figure == Figure.whiteBishop ||
                     figure == Figure.whiteKnight ||
-                    figure == Figure.whitePawn) ? Color.white : Color.black;
+                    figure == Figure.whitePawn) 
+                    ? Color.white 
+                    : Color.black;
         }
     }
 }

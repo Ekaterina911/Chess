@@ -16,6 +16,9 @@ namespace ChessDemo
             {
                 Console.WriteLine(chess.fen);
                 Print(ChessToAscii(chess));
+                foreach (string moves in chess.GetAllMoves())
+                    Console.Write(moves + "\n");
+                Console.Write("> ");
                 string move = Console.ReadLine();
                 if (move == "") break;
                 chess = chess.Move(move);

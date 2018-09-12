@@ -20,22 +20,25 @@ namespace Chess
         {
             this.fm = fm;
             return
-                CanMoveFrom() && CanMoveTo() && CanFigureMove();
+                CanMoveFrom() && 
+                CanMoveTo() && 
+                CanFigureMove();
         }
 
         private bool CanMoveFrom()
         {
-            return fm.from.OnBoard() && fm.figure.GetColor() == board.moveColor;
+            return fm.from.OnBoard() && 
+                   fm.figure.GetColor() == board.moveColor;
         }
 
         private bool CanMoveTo()
         {
             return fm.from.OnBoard() &&
-                   fm.from != fm.to &&
+                   //fm.from != fm.to &&
                    board.GetFigureAt(fm.to).GetColor() != board.moveColor;
         }
 
-        private bool CanFigureMove()
+        private bool CanFigureMove()                    
         {
             switch (fm.figure)
             {
@@ -49,11 +52,13 @@ namespace Chess
 
                 case Figure.whiteRook:
                 case Figure.blackRook:
-                    return false;
+                    return (fm.SignX == 0 || fm.SignY == 0) &&
+                            CanStraightMove();
 
                 case Figure.whiteBishop:
                 case Figure.blackBishop:
-                    return false;
+                    return (fm.SignX != 0 && fm.SignY != 0) &&
+                            CanStraightMove();
 
                 case Figure.whiteKnight:
                 case Figure.blackKnight:
@@ -61,7 +66,7 @@ namespace Chess
 
                 case Figure.whitePawn:
                 case Figure.blackPawn:
-                    return false;
+                    return CanPawnMove();
 
                 default: return false;
             }
@@ -77,7 +82,7 @@ namespace Chess
                     return true;
             } while (at.OnBoard() &&
                     board.GetFigureAt(at) == Figure.none);
-            return true;
+            return false;
         }
 
         private bool CanKingMove()
@@ -93,6 +98,45 @@ namespace Chess
                 return true;
             if (fm.AbsDeltaX == 2 && fm.AbsDeltaY == 1)
                 return true;
+            return false;
+        }
+
+        private bool CanPawnMove()
+        {
+            if (fm.from.y < 1 || fm.from.y > 6)
+                return false;
+            int stepY = fm.figure.GetColor() == Color.white ? 1 : -1;
+            return CanPawnGo(stepY) ||
+                   CanPawnJump(stepY) ||
+                   CanPawnEat(stepY);
+        }
+
+        private bool CanPawnGo(int stepY)
+        {
+            if (board.GetFigureAt(fm.to) == Figure.none)
+                if (fm.DeltaX == 0)
+                    if (fm.DeltaY == stepY)
+                        return true;
+            return false;
+        }
+
+        private bool CanPawnJump(int stepY)
+        {
+            if (board.GetFigureAt(fm.to) == Figure.none)
+                if (fm.DeltaX == 0)
+                    if (fm.DeltaY == 2 * stepY)
+                        if (fm.from.y == 1 || fm.from.y == 6)
+                            if (board.GetFigureAt(new Square(fm.from.x, fm.from.y + stepY)) == Figure.none)
+                                return true;
+            return false;
+        }
+
+        private bool CanPawnEat(int stepY)
+        {
+            if (board.GetFigureAt(fm.to) != Figure.none)
+                if (fm.AbsDeltaX == 1)
+                    if (fm.DeltaY == stepY)
+                        return true;
             return false;
         }
     }
